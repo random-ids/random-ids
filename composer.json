@@ -1,0 +1,29 @@
+{
+    "name": "willcn/random-ids",
+    "description": "Generate a non-repetitive random ID.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Will Lin",
+            "email": "will@cn09.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": "^7.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "<7"
+    },
+    "autoload": {
+        "psr-4": {
+            "RandomIds\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "RandomIds\\Tests\\": "tests/"
+        }
+    }
+}
