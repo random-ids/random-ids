@@ -1,2 +1,8 @@
-# hash-uid
-Convert your user id to a 7-bit number
+# random-ids
+Generate a non-repetitive random ID
+
+```
+$path='your/path';
+$randomIds=new willcn/random-ids($path);
+$id=$randomIds->get();
+```
