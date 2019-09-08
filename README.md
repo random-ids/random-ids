@@ -1,14 +1,14 @@
 # random-ids
 Generate a non-repetitive random ID.
 Basic example:
-```
+```php
 <?php
 $path='your/path';//save a random ids array.At first,all ids are 7-bit number
 $randomIds=new willcn\random-ids($path);
 $id=$randomIds->getId();//return a id number from array and remove it.
 ```
 If ids array file lost:
-```
+```php
 <?php
 $path='your/path';
 $randomIds=new willcn\random-ids($path);
