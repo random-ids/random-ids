@@ -13,5 +13,6 @@ If ids array file lost:
 $path='your/path';
 $randomIds=new willcn\random-ids($path);
 $number=1;//save a new random ids array.All ids more than $number*1000000
-$randomIds->create($number);//If you do not delete the file yourself, you do not need to perform this step.New ids will auto created.
+//If you do not delete the file yourself, you do not need to perform this step.New ids will auto created.
+$randomIds->create($number);
 ```
