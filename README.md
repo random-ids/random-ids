@@ -1,18 +1,28 @@
 # random-ids
 Generate a non-repetitive random ID.
+Sometimes you don't want people to guess the rules of some IDs,then you can use random-ids.
 Basic example:
 ```php
 <?php
-$path='your/path';//save a random ids array.At first,all ids are 7-bit number
-$randomIds=new willcn\random-ids($path);
-$id=$randomIds->getId();//return a id number from array and remove it.
+require_once('../vendor/autoload.php');
+$demo = new Demo();
+$randomIds = new RandomIds\RandomIds();
+echo $randomIds->getId();
 ```
-If ids array file lost:
+Default example:
 ```php
 <?php
-$path='your/path';
-$randomIds=new willcn\random-ids($path);
-$number=1;//save a new random ids array.All ids more than $number*1000000
-//If you do not delete the file yourself, you do not need to perform this step.New ids will auto created.
-$randomIds->create($number);
+require_once('../vendor/autoload.php');
+//Specify the folder where random data is stored. If not specified, the data will be stored in the vendor folder.
+$path = './demo_data';
+$randomIds = new RandomIds\RandomIds($path);
+//once
+$lastId = $randomIds->getId();
+$cache = new Cache();
+$cache->set('lastId', $lastId);
+//next time
+$lastId = $cache->get('lastId');
+//Enter the last acquired id value and automatically generate the next order of magnitude random table if the data file is lost.
+$id = $randomIds->getId($lastId);
+echo $id;
 ```

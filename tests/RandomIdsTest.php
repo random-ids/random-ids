@@ -26,14 +26,9 @@ class RandomIdsTest extends TestCase
     public function testGetId()
     {
         $randomIds = new RandomIds($this->path);
-        $randomIds->getId();
-        clearstatcache();
-        $startSize = filesize($randomIds->fileName);
         $id = $randomIds->getId();
-        clearstatcache();
-        $endSize = filesize($randomIds->fileName);
+        echo $id;
         $this->assertLessThan($id, 0);
-        $this->assertLessThan($startSize, $endSize);
     }
 
     /**
@@ -51,5 +46,13 @@ class RandomIdsTest extends TestCase
         $newId = $randomIds->getId();
         $limit = ceil($lastId / $randomIds->limit) * $randomIds->limit;
         $this->assertLessThan($newId, $limit);
+    }
+
+    public function testSetLimit()
+    {
+        $randomIds = new RandomIds($this->path);
+        $limit = 1000;
+        $randomIds->setLimit($limit);
+        $this->assertEquals($randomIds->limit, $limit);
     }
 }
