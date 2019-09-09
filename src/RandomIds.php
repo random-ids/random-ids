@@ -19,11 +19,7 @@ class RandomIds
 
     public function getId($lastId = 0)
     {
-        if (!file_exists($this->fileName)) {
-            $start = floor($lastId / $this->limit);
-            $this->create($start);
-        }
-        $id = $this->read();
+        $id = $this->read($lastId);
         return $id;
     }
 
@@ -61,8 +57,12 @@ class RandomIds
         }
     }
 
-    protected function read()
+    protected function read($lastId = 0)
     {
+        if (!file_exists($this->fileName)) {
+            $start = floor($lastId / $this->limit);
+            $this->create($start);
+        }
         $size = filesize($this->fileName);
         clearstatcache();
         $file = fopen($this->fileName, "a+");
