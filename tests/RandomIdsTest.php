@@ -27,7 +27,6 @@ class RandomIdsTest extends TestCase
     {
         $randomIds = new RandomIds($this->path);
         $id = $randomIds->getId();
-        echo $id;
         $this->assertLessThan($id, 0);
     }
 

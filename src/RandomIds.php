@@ -19,23 +19,18 @@ class RandomIds
 
     public function getId($lastId = 0)
     {
-    //        if (!file_exists($this->fileName)) {
-    //            $start = ceil($lastId / $this->limit);
-    //            $this->create($start);
-    //        }
+        if (!file_exists($this->fileName)) {
+            $start = floor($lastId / $this->limit);
+            $this->create($start);
+        }
         $id = $this->read();
         return $id;
     }
 
     public function create($start = 0)
     {
-        if ($start == 0) {
-            $startNum = $this->limit / 10;
-            $endNum = $this->limit - 1;
-        } else {
-            $startNum = $start * $this->limit;
-            $endNum = $startNum + $this->limit - 1;
-        }
+        $startNum = ($start + 1) * $this->limit;
+        $endNum = $startNum + $this->limit - 1;
         $ids = [];
         for ($i = $startNum; $i <= $endNum; $i++) {
             $ids[] = $i;
@@ -71,16 +66,18 @@ class RandomIds
         $size = filesize($this->fileName);
         clearstatcache();
         $file = fopen($this->fileName, "a+");
-        $id = fgets($file);
-        $size = $size - strlen($id);
-        if ($size > 0) {
-            ftruncate($file, $size);
+        $offset = $size - strlen($this->limit);
+        fseek($file, $offset);
+        $id = intval(fgets($file));
+        $eof = $offset - 1;
+        if ($eof > 0) {
+            ftruncate($file, $eof);
             fclose($file);
         } else {
             fclose($file);
-            $start = ceil($id / $this->limit);
+            $start = floor($id / $this->limit);
             $this->create($start);
         }
-        return intval($id);
+        return $id;
     }
 }
