@@ -8,7 +8,7 @@ namespace RandomIds;
 class RandomIds
 {
     protected $fileName;
-    protected $limit = 10;
+    protected $limit = 1000000;
 
     public function __construct($path = '')
     {
