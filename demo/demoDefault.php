@@ -2,7 +2,7 @@
 require_once('../vendor/autoload.php');
 //Specify the folder where random data is stored. If not specified, the data will be stored in the vendor....
 $path = './demo_data';
-$randomIds = new RandomIds\RandomIds($path);
+$randomIds = new RandomIds\FileRandomIds($path);
 //once
 $lastId = $randomIds->getId();
 //next time

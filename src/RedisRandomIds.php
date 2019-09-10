@@ -5,7 +5,7 @@
 
 namespace RandomIds;
 
-class RandomIds
+class RedisRandomIds implements RandomIdsInterface
 {
     protected $fileName;
     protected $limit = 1000000;
@@ -57,7 +57,7 @@ class RandomIds
         }
     }
 
-    protected function read($lastId = 0)
+    protected function pop($lastId = 0)
     {
         if (!file_exists($this->fileName)) {
             $start = floor($lastId / $this->limit);

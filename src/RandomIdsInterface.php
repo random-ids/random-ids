@@ -3,6 +3,7 @@
  * @author Will Lin <will@cn09.com>
  */
 
+namespace RandomIds;
 interface RandomIdsInterface
 {
     /**

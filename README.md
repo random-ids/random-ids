@@ -8,7 +8,7 @@ Basic example:
 <?php
 require_once('../vendor/autoload.php');
 $demo = new Demo();
-$randomIds = new RandomIds\RandomIds();
+$randomIds = new RandomIds\FileRandomIds();
 echo $randomIds->getId();
 ```
 Default example:
@@ -17,7 +17,7 @@ Default example:
 require_once('../vendor/autoload.php');
 //Specify the folder where random data is stored. If not specified, the data will be stored in the vendor....
 $path = './demo_data';
-$randomIds = new RandomIds\RandomIds($path);
+$randomIds = new RandomIds\FileRandomIds($path);
 //once
 $lastId = $randomIds->getId();
 //next time
@@ -39,7 +39,7 @@ echo $id;
 <?php
 require_once('../vendor/autoload.php');
 $demo = new Demo();
-$randomIds = new RandomIds\RandomIds();
+$randomIds = new RandomIds\FileRandomIds();
 echo $randomIds->getId();
 ```
 常用实例:
@@ -48,7 +48,7 @@ echo $randomIds->getId();
 require_once('../vendor/autoload.php');
 //你可以指定随机数据表的保存位置，这样管理会比较方便，如果你有多个类型的ID需要生成，可以分别把随机数据表保存在不同的文件夹下
 $path = './demo_data';
-$randomIds = new RandomIds\RandomIds($path);
+$randomIds = new RandomIds\FileRandomIds($path);
 //once
 $lastId = $randomIds->getId();
 //next time

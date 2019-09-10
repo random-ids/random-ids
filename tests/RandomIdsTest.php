@@ -5,7 +5,7 @@
 
 namespace RandomIds\Tests;
 
-use RandomIds\RandomIds;
+use RandomIds\FileRandomIds;
 use PHPUnit\Framework\TestCase;
 
 class RandomIdsTest extends TestCase
@@ -17,7 +17,7 @@ class RandomIdsTest extends TestCase
      */
     public function testCreate()
     {
-        $randomIds = new RandomIds($this->path);
+        $randomIds = new FileRandomIds($this->path);
         $randomIds->create();
         $this->assertFileExists($randomIds->fileName);
     }
@@ -25,7 +25,7 @@ class RandomIdsTest extends TestCase
 
     public function testGetId()
     {
-        $randomIds = new RandomIds($this->path);
+        $randomIds = new FileRandomIds($this->path);
         $id = $randomIds->getId();
         $this->assertLessThan($id, 0);
     }
@@ -36,10 +36,10 @@ class RandomIdsTest extends TestCase
     public function testGetMoreId()
     {
         $testValue = 21234567;
-        $method = new \ReflectionMethod('RandomIds\RandomIds', 'save');
+        $method = new \ReflectionMethod('RandomIds\FileRandomIds', 'save');
         $method->setAccessible(true);
-        $method->invokeArgs(new RandomIds($this->path), [$testValue]);
-        $randomIds = new RandomIds($this->path);
+        $method->invokeArgs(new FileRandomIds($this->path), [$testValue]);
+        $randomIds = new FileRandomIds($this->path);
         $lastId = $randomIds->getId();
         $this->assertEquals($lastId, $testValue);
         $newId = $randomIds->getId();
@@ -49,7 +49,7 @@ class RandomIdsTest extends TestCase
 
     public function testSetLimit()
     {
-        $randomIds = new RandomIds($this->path);
+        $randomIds = new FileRandomIds($this->path);
         $limit = 1000;
         $randomIds->setLimit($limit);
         $this->assertEquals($randomIds->limit, $limit);
