@@ -5,10 +5,9 @@
 
 namespace RandomIds;
 
-class FileRandomIds implements RandomIdsInterface
+class FileRandomIds extends RandomIds
 {
     protected $fileName;
-    protected $limit = 1000000;
 
     public function __construct($path = '')
     {
@@ -17,38 +16,20 @@ class FileRandomIds implements RandomIdsInterface
     }
 
 
-    public function getId($lastId = 0)
+    /**
+     * @param int $lastId
+     * @return int
+     */
+    public function getId(int $lastId = 0)
     {
-        $id = $this->read($lastId);
-        return $id;
+        return $this->pop($lastId);
     }
 
-    public function create($start = 0)
-    {
-        $startNum = ($start + 1) * $this->limit;
-        $endNum = $startNum + $this->limit - 1;
-        $ids = [];
-        for ($i = $startNum; $i <= $endNum; $i++) {
-            $ids[] = $i;
-        }
-        shuffle($ids);
-        $this->save($ids);
-    }
-
-    public function setLimit($number)
-    {
-        if ($number % 10 > 0) {
-            throw new \Exception('$number must be the power of 10');
-        }
-        $this->limit = $number;
-    }
-
-    public function __get($name)
-    {
-        return $this->$name;
-    }
-
-    protected function save($ids)
+    /**
+     * @param array $ids
+     * @throws \Exception
+     */
+    protected function save(array $ids)
     {
         $fileName = $this->fileName;
         $ids = implode("\n", $ids);
@@ -57,16 +38,17 @@ class FileRandomIds implements RandomIdsInterface
         }
     }
 
-    protected function pop($lastId = 0)
+    protected function pop(int $lastId = 0)
     {
         if (!file_exists($this->fileName)) {
-            $start = floor($lastId / $this->limit);
+            $start = ceil($lastId / $this->limit);
             $this->create($start);
         }
         $size = filesize($this->fileName);
         clearstatcache();
         $file = fopen($this->fileName, "a+");
-        $offset = $size - strlen($this->limit);
+        $tempId = fgets($file);
+        $offset = $size - strlen($tempId) + 1;
         fseek($file, $offset);
         $id = intval(fgets($file));
         $eof = $offset - 1;
@@ -75,7 +57,7 @@ class FileRandomIds implements RandomIdsInterface
             fclose($file);
         } else {
             fclose($file);
-            $start = floor($id / $this->limit);
+            $start = ceil($id / $this->limit);
             $this->create($start);
         }
         return $id;

@@ -8,7 +8,7 @@ namespace RandomIds\Tests;
 use RandomIds\FileRandomIds;
 use PHPUnit\Framework\TestCase;
 
-class RandomIdsTest extends TestCase
+class FileRandomIdsTest extends TestCase
 {
     public $path = './test_data';
 
@@ -35,13 +35,14 @@ class RandomIdsTest extends TestCase
      */
     public function testGetMoreId()
     {
-        $testValue = 21234567;
+        $testValue = [2134567, 2234567];
         $method = new \ReflectionMethod('RandomIds\FileRandomIds', 'save');
         $method->setAccessible(true);
         $method->invokeArgs(new FileRandomIds($this->path), [$testValue]);
         $randomIds = new FileRandomIds($this->path);
+        $randomIds->getId();
         $lastId = $randomIds->getId();
-        $this->assertEquals($lastId, $testValue);
+        $this->assertEquals($lastId, $testValue[0]);
         $newId = $randomIds->getId();
         $limit = ceil($lastId / $randomIds->limit) * $randomIds->limit;
         $this->assertLessThan($newId, $limit);
@@ -50,8 +51,12 @@ class RandomIdsTest extends TestCase
     public function testSetLimit()
     {
         $randomIds = new FileRandomIds($this->path);
-        $limit = 1000;
+        $limit = 0;
         $randomIds->setLimit($limit);
+        $id = $randomIds->getId();
+        echo('id=' . $id);
+        $this->assertLessThan($id, 0);
         $this->assertEquals($randomIds->limit, $limit);
+
     }
 }

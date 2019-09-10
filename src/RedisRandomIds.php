@@ -5,77 +5,65 @@
 
 namespace RandomIds;
 
-class RedisRandomIds implements RandomIdsInterface
+class RedisRandomIds extends RandomIds
 {
-    protected $fileName;
-    protected $limit = 1000000;
+    protected $connection;
+    protected $redisClient;
+    const REDIS_KEY = 'random-ids-store';
 
-    public function __construct($path = '')
+    public function __construct($connection = null)
     {
-        $path = $path ?: __DIR__ . '/data';
-        $this->fileName = $path . '/random_ids.data';
-    }
-
-
-    public function getId($lastId = 0)
-    {
-        $id = $this->read($lastId);
-        return $id;
-    }
-
-    public function create($start = 0)
-    {
-        $startNum = ($start + 1) * $this->limit;
-        $endNum = $startNum + $this->limit - 1;
-        $ids = [];
-        for ($i = $startNum; $i <= $endNum; $i++) {
-            $ids[] = $i;
-        }
-        shuffle($ids);
-        $this->save($ids);
-    }
-
-    public function setLimit($number)
-    {
-        if ($number % 10 > 0) {
-            throw new \Exception('$number must be the power of 10');
-        }
-        $this->limit = $number;
-    }
-
-    public function __get($name)
-    {
-        return $this->$name;
-    }
-
-    protected function save($ids)
-    {
-        $fileName = $this->fileName;
-        $ids = implode("\n", $ids);
-        if (!file_put_contents($fileName, $ids)) {
-            throw new \Exception('File can\'t write:' . $fileName);
+        if ($connection) {
+            $this->setConnection($connection);
         }
     }
 
-    protected function pop($lastId = 0)
+    public function setConnection($connection)
     {
-        if (!file_exists($this->fileName)) {
-            $start = floor($lastId / $this->limit);
-            $this->create($start);
+        $this->connection = $connection;
+    }
+
+    public function redis()
+    {
+        if (!$this->redisClient) {
+            $redis = new \Redis();
+            $redis->connect($this->connection['host'], $this->connection['port']);
+            if (isset($this->connection['password']) && $this->connection['password']) {
+                $redis->auth($this->connection['password']);
+            }
+            $redis->select($this->connection['dbindex']);
+            $this->redisClient = $redis;
         }
-        $size = filesize($this->fileName);
-        clearstatcache();
-        $file = fopen($this->fileName, "a+");
-        $offset = $size - strlen($this->limit);
-        fseek($file, $offset);
-        $id = intval(fgets($file));
-        $eof = $offset - 1;
-        if ($eof > 0) {
-            ftruncate($file, $eof);
-            fclose($file);
-        } else {
-            fclose($file);
-            $start = floor($id / $this->limit);
+        return $this->redisClient;
+    }
+
+
+    /**
+     * @param int $lastId
+     * @return int
+     */
+    public function getId(int $lastId = 0)
+    {
+        return $this->pop($lastId);
+    }
+
+
+    /**
+     * @param array $ids
+     * @throws \Exception
+     */
+    protected function save(array $ids)
+    {
+        array_unshift($ids, self::REDIS_KEY);
+        $redis = $this->redis();
+        call_user_func_array([$redis, 'lPush'], $ids);
+    }
+
+    protected function pop(int $lastId = 0)
+    {
+        $id = $this->redis()->rpop(self::REDIS_KEY);
+        if (!$this->redis()->lLen(self::REDIS_KEY)) {
+            $start = ceil($id / $this->limit);
             $this->create($start);
         }
         return $id;
