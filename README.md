@@ -38,11 +38,14 @@ echo $id;
 
 另外，你也可以用这个库来生成一些抽奖号码之类的随机值。
 
+目前，我们支持文件方式和redis方式储存随机数表。
+
 基本实例:
 ```php
 <?php
 require_once('../vendor/autoload.php');
 $demo = new Demo();
+//你也可以使用RedisRandomIds.
 $randomIds = new RandomIds\FileRandomIds();
 echo $randomIds->getId();
 ```
@@ -52,6 +55,7 @@ echo $randomIds->getId();
 require_once('../vendor/autoload.php');
 //你可以指定随机数据表的保存位置，这样管理会比较方便，如果你有多个类型的ID需要生成，可以分别把随机数据表保存在不同的文件夹下
 $path = './demo_data';
+//你也可以使用RedisRandomIds.
 $randomIds = new RandomIds\FileRandomIds($path);
 //once
 $lastId = $randomIds->getId();
