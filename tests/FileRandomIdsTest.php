@@ -51,7 +51,7 @@ class FileRandomIdsTest extends TestCase
     public function testSetLimit()
     {
         $randomIds = new FileRandomIds($this->path);
-        $limit = 0;
+        $limit = 10;
         $randomIds->setLimit($limit);
         $id = $randomIds->getId();
         echo('id=' . $id);

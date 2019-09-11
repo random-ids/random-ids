@@ -41,14 +41,14 @@ class FileRandomIds extends RandomIds
     protected function pop(int $lastId = 0)
     {
         if (!file_exists($this->fileName)) {
-            $start = ceil($lastId / $this->limit);
+            $start = ceil($lastId / $this->limit / 10);
             $this->create($start);
         }
         $size = filesize($this->fileName);
         clearstatcache();
         $file = fopen($this->fileName, "a+");
         $tempId = fgets($file);
-        $offset = $size - strlen($tempId) + 1;
+        $offset = $size > strlen($tempId) ? $size - strlen($tempId) + 1 : 0;
         fseek($file, $offset);
         $id = intval(fgets($file));
         $eof = $offset - 1;
@@ -57,7 +57,7 @@ class FileRandomIds extends RandomIds
             fclose($file);
         } else {
             fclose($file);
-            $start = ceil($id / $this->limit);
+            $start = ceil($id / $this->limit / 10);
             $this->create($start);
         }
         return $id;

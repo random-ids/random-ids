@@ -10,6 +10,7 @@ class RedisRandomIds extends RandomIds
     protected $connection;
     protected $redisClient;
     const REDIS_KEY = 'random-ids-store';
+    protected $redisKey;
 
     public function __construct($connection = null)
     {
@@ -21,6 +22,9 @@ class RedisRandomIds extends RandomIds
     public function setConnection($connection)
     {
         $this->connection = $connection;
+        $this->redisKey = isset($connection['key']) && $connection['key']
+            ? self::REDIS_KEY . '-' . $connection['key']
+            : self::REDIS_KEY;
     }
 
     public function redis()
@@ -54,16 +58,24 @@ class RedisRandomIds extends RandomIds
      */
     protected function save(array $ids)
     {
-        array_unshift($ids, self::REDIS_KEY);
         $redis = $this->redis();
-        call_user_func_array([$redis, 'lPush'], $ids);
+        $chunkLimit = 100000;
+        $chunk = array_chunk($ids, $chunkLimit);
+        foreach ($chunk as $childrenIds) {
+            array_unshift($childrenIds, $this->redisKey);
+            call_user_func_array([$redis, 'lPush'], $childrenIds);
+        }
     }
 
     protected function pop(int $lastId = 0)
     {
-        $id = $this->redis()->rpop(self::REDIS_KEY);
-        if (!$this->redis()->lLen(self::REDIS_KEY)) {
-            $start = ceil($id / $this->limit);
+        $id = $this->redis()->rpop($this->redisKey);
+        if (!$id) {
+            $start = ceil($lastId / $this->limit / 10);
+            $this->create($start);
+            $id = $this->redis()->rpop($this->redisKey);
+        } elseif (!$this->redis()->lLen($this->redisKey)) {
+            $start = ceil($id / $this->limit / 10);
             $this->create($start);
         }
         return $id;

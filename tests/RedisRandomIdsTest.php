@@ -17,7 +17,8 @@ class RedisRandomIdsTest extends TestCase
             'host' => '127.0.0.1',
             'port' => '6379',
             'password' => 'K8lYF7k0GJJy',
-            'dbindex' => 1
+            'dbindex' => 1,
+            'key' => 'test'
         ];
     }
 
@@ -63,7 +64,7 @@ class RedisRandomIdsTest extends TestCase
     public function testSetLimit()
     {
         $randomIds = new RedisRandomIds($this->getConnection());
-        $limit = 0;
+        $limit = 10;
         $randomIds->setLimit($limit);
         $id = $randomIds->getId();
         echo('id=' . $id);

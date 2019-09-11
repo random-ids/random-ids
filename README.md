@@ -3,11 +3,14 @@ Generate a non-repetitive random ID.
 
 Sometimes you don't want people to guess the rules of some IDs,then you can use random-ids.
 
+At present,we support file and redis.
+
 Basic example:
 ```php
 <?php
 require_once('../vendor/autoload.php');
 $demo = new Demo();
+//you can use RedisRandomIds for redis.
 $randomIds = new RandomIds\FileRandomIds();
 echo $randomIds->getId();
 ```
@@ -17,6 +20,7 @@ Default example:
 require_once('../vendor/autoload.php');
 //Specify the folder where random data is stored. If not specified, the data will be stored in the vendor....
 $path = './demo_data';
+//you can use RedisRandomIds for redis.
 $randomIds = new RandomIds\FileRandomIds($path);
 //once
 $lastId = $randomIds->getId();

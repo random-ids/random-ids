@@ -1,6 +1,6 @@
 {
     "name": "random-ids/random-ids",
-    "description": "Generate a non-repetitive random ID.Sometimes you don't want people to guess the rules of some IDs,then you can use random-ids.",
+    "description": "Generate a non-repetitive random ID.\nSometimes you don't want people to guess the rules of some IDs,then you can use random-ids.\nAt present,we support file and redis.",
     "keywords": [
         "hashids",
         "hashid",
