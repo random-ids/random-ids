@@ -57,6 +57,14 @@ class FileRandomIdsTest extends TestCase
         echo('id=' . $id);
         $this->assertLessThan($id, 0);
         $this->assertEquals($randomIds->limit, $limit);
+    }
 
+    public function testInitLimit()
+    {
+        $randomIds = new FileRandomIds($this->path, 10);
+        $id = $randomIds->getId();
+        echo('id=' . $id);
+        $this->assertLessThan($id, 0);
+        $this->assertEquals($randomIds->limit, $limit);
     }
 }

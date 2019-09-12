@@ -17,6 +17,7 @@ function getConnection()
         'port' => '6379',
         'password' => 'K8lYF7k0GJJy',
         'dbindex' => 2,
-        'key'=>'order-number' //If you want to generate multiple ID in the same project,you can custom the redis key
+        'key'=>'order-number', //If you want to generate multiple ID in the same project,you can custom the redis key
+        'limit'=>'10'//It will create a random IDs store include 10-99,When all IDs used,will auto create 100-199,200-299......
     ];
 }

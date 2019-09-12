@@ -9,10 +9,13 @@ class FileRandomIds extends RandomIds
 {
     protected $fileName;
 
-    public function __construct($path = '')
+    public function __construct(string $path = '', int $limit = 0)
     {
         $path = $path ?: __DIR__ . '/data';
         $this->fileName = $path . '/random_ids.data';
+        if ($limit) {
+            $this->setLimit($limit);
+        }
     }
 
 
@@ -38,6 +41,10 @@ class FileRandomIds extends RandomIds
         }
     }
 
+    /**
+     * @param int $lastId
+     * @return int
+     */
     protected function pop(int $lastId = 0)
     {
         if (!file_exists($this->fileName)) {

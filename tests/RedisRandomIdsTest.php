@@ -64,12 +64,22 @@ class RedisRandomIdsTest extends TestCase
     public function testSetLimit()
     {
         $randomIds = new RedisRandomIds($this->getConnection());
-        $limit = 10;
+        $limit = 100;
         $randomIds->setLimit($limit);
         $id = $randomIds->getId();
         echo('id=' . $id);
         $this->assertLessThan($id, 0);
         $this->assertEquals($randomIds->limit, $limit);
+    }
 
+    public function testInitLimit()
+    {
+        $conn = $this->getConnection();
+        $conn['limit'] = 100;
+        $randomIds = new RedisRandomIds($conn);
+        $id = $randomIds->getId();
+        echo('id=' . $id);
+        $this->assertLessThan($id, 0);
+        $this->assertEquals($randomIds->limit, $conn['limit']);
     }
 }

@@ -5,6 +5,8 @@
 
 namespace RandomIds;
 
+use phpDocumentor\Reflection\Types\Object_;
+
 class RedisRandomIds extends RandomIds
 {
     protected $connection;
@@ -12,19 +14,26 @@ class RedisRandomIds extends RandomIds
     const REDIS_KEY = 'random-ids-store';
     protected $redisKey;
 
-    public function __construct($connection = null)
+    /**
+     * RedisRandomIds constructor.
+     * @param null $connection
+     */
+    public function __construct(?array $connection = null)
     {
         if ($connection) {
             $this->setConnection($connection);
         }
     }
 
-    public function setConnection($connection)
+    public function setConnection(array $connection)
     {
         $this->connection = $connection;
         $this->redisKey = isset($connection['key']) && $connection['key']
             ? self::REDIS_KEY . '-' . $connection['key']
             : self::REDIS_KEY;
+        if (isset($connection['limit']) && $connection['limit']) {
+            $this->setLimit($connection['limit']);
+        }
     }
 
     public function redis()
