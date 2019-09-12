@@ -1,38 +1,42 @@
 {
-    "name": "random-ids/random-ids",
-    "description": "Generate a non-repetitive random ID.Sometimes you don't want people to guess the rules of some IDs,then you can use random-ids.At present,we support file and redis.",
-    "keywords": [
-        "hashids",
-        "hashid",
-        "hash",
-        "ids",
-        "random",
-        "unique",
-        "id"
-    ],
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Will Lin",
-            "email": "will@cn09.com"
-        }
-    ],
-    "minimum-stability": "dev",
-    "require": {
-        "php": "^7.1"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "<7"
-    },
-    "autoload": {
-        "psr-4": {
-            "RandomIds\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "RandomIds\\Tests\\": "tests/"
-        }
+  "name": "random-ids/random-ids",
+  "description": "Generate a non-repetitive random ID.Sometimes you don't want people to guess the rules of some IDs,then you can use random-ids.At present,we support file and redis.",
+  "keywords": [
+    "hashids",
+    "hashid",
+    "hash",
+    "ids",
+    "random",
+    "unique",
+    "id"
+  ],
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Will Lin",
+      "email": "will@cn09.com"
     }
+  ],
+  "support": {
+    "email": "will@cn09.com",
+    "issues": "https://github.com/random-ids/random-ids/issues"
+  },
+  "minimum-stability": "stable",
+  "require": {
+    "php": "^7.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "RandomIds\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "RandomIds\\Tests\\": "tests/"
+    }
+  }
 }
