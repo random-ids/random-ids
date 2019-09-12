@@ -5,7 +5,7 @@ Sometimes you don't want people to guess the rules of some IDs,then you can use 
 
 At present,we support file and redis.
 
-Basic example:
+### Basic example:
 ```php
 <?php
 require_once('../vendor/autoload.php');
@@ -14,7 +14,7 @@ $demo = new Demo();
 $randomIds = new RandomIds\FileRandomIds();
 echo $randomIds->getId();
 ```
-Default example:
+### Default example:
 ```php
 <?php
 require_once('../vendor/autoload.php');
@@ -29,7 +29,17 @@ $lastId = $randomIds->getId();
 $id = $randomIds->getId($lastId);
 echo $id;
 ```
-
+### change limit Example
+```php
+<?php
+require_once('../vendor/autoload.php');
+$path = './demo_data';
+//It will create a random IDs store include 10-99,When all IDs used,will auto create 100-199,200-299......
+$limit = 10;
+$demo = new Demo();
+$randomIds = new RandomIds\FileRandomIds($path,$limit);
+echo $randomIds->getId();
+```
 # 随机生成ID
 随机生成不重复的ID值.
 
@@ -40,7 +50,7 @@ echo $id;
 
 目前，我们支持文件方式和redis方式储存随机数表。
 
-基本实例:
+### 基本实例:
 ```php
 <?php
 require_once('../vendor/autoload.php');
@@ -49,7 +59,7 @@ $demo = new Demo();
 $randomIds = new RandomIds\FileRandomIds();
 echo $randomIds->getId();
 ```
-常用实例:
+### 常用实例:
 ```php
 <?php
 require_once('../vendor/autoload.php');
@@ -64,4 +74,16 @@ $lastId = $randomIds->getId();
 //如果只是正常数据用完，无需使用lastId,系统在取出最后一个ID的同时生成下一组数据表
 $id = $randomIds->getId($lastId);
 echo $id;
+```
+### 修改限制实例
+```php
+<?php
+require_once('../vendor/autoload.php');
+$path = './demo_data';
+//当limit设置为10时，首次生成随机数10-99,以后每次随机数用尽时,会依次自动生成 100-199,200-299......
+$limit = 10;
+$demo = new Demo();
+//你也可以使用RedisRandomIds.
+$randomIds = new RandomIds\FileRandomIds($path,$limit);
+echo $randomIds->getId();
 ```
