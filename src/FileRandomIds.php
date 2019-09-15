@@ -8,24 +8,47 @@ namespace RandomIds;
 class FileRandomIds extends RandomIds
 {
     protected $fileName;
+    protected $connection;
 
-    public function __construct(string $path = '', int $limit = 0)
+    public function __construct(array $connection = null)
     {
-        $path = $path ?: __DIR__ . '/data';
-        $this->fileName = $path . '/random_ids.data';
-        if ($limit) {
-            $this->setLimit($limit);
+        if ($connection) {
+            $this->setConnection($connection);
         }
     }
 
+    public function setConnection(array $connection)
+    {
+        $this->connection = $connection;
+        $path = isset($connection['path']) ? $connection['path'] : __DIR__ . '/data';
+        $this->fileName = $path . '/random_ids.data';
+        if (isset($connection['limit']) && $connection['limit']) {
+            $this->setLimit($connection['limit']);
+        }
+    }
 
     /**
      * @param int $lastId
      * @return int
      */
-    public function getId(int $lastId = 0)
+    public function getId(int $lastId = 0): int
     {
         return $this->pop($lastId);
+    }
+
+    /**
+     * @return int
+     */
+    public function getStoreLength(): int
+    {
+        if (!file_exists($this->fileName)) {
+            return 0;
+        }
+        $size = filesize($this->fileName);
+        clearstatcache();
+        $file = fopen($this->fileName, "a+");
+        $tempId = fgets($file);
+        return ceil($size / strlen($tempId));
     }
 
     /**
@@ -36,6 +59,7 @@ class FileRandomIds extends RandomIds
     {
         $fileName = $this->fileName;
         $ids = implode("\n", $ids);
+        $ids = file_exists($fileName) ? $ids . "\n" . file_get_contents($fileName) : $ids;
         if (!file_put_contents($fileName, $ids)) {
             throw new \Exception('File can\'t write:' . $fileName);
         }
@@ -45,27 +69,24 @@ class FileRandomIds extends RandomIds
      * @param int $lastId
      * @return int
      */
-    protected function pop(int $lastId = 0)
+    protected function pop(int $lastId = 0): int
     {
         if (!file_exists($this->fileName)) {
-            $start = ceil($lastId / $this->limit / 10);
-            $this->create($start);
+            $this->create($lastId);
         }
         $size = filesize($this->fileName);
         clearstatcache();
         $file = fopen($this->fileName, "a+");
-        $tempId = fgets($file);
-        $offset = $size > strlen($tempId) ? $size - strlen($tempId) + 1 : 0;
+        $tempId = trim(fgets($file));
+        $idLen = strlen($tempId);
+        $offset = $size == $idLen ? 0 : $size - $idLen;
         fseek($file, $offset);
-        $id = intval(fgets($file));
-        $eof = $offset - 1;
-        if ($eof > 0) {
-            ftruncate($file, $eof);
-            fclose($file);
-        } else {
-            fclose($file);
-            $start = ceil($id / $this->limit / 10);
-            $this->create($start);
+        $id = intval(trim(fgets($file)));
+        $eof = $offset > 1 ? $offset - 1 : 0;
+        ftruncate($file, $eof);
+        fclose($file);
+        if ($eof == 0) {
+            $this->create($tempId);
         }
         return $id;
     }

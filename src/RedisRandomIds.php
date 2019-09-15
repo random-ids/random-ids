@@ -60,6 +60,13 @@ class RedisRandomIds extends RandomIds
         return $this->pop($lastId);
     }
 
+    /**
+     * @return int
+     */
+    public function getStoreLength(): int
+    {
+        return $this->redis()->lLen($this->redisKey);
+    }
 
     /**
      * @param array $ids
@@ -76,16 +83,14 @@ class RedisRandomIds extends RandomIds
         }
     }
 
-    protected function pop(int $lastId = 0)
+    protected function pop(int $lastId = 0): int
     {
         $id = $this->redis()->rpop($this->redisKey);
         if (!$id) {
-            $start = ceil($lastId / $this->limit / 10);
-            $this->create($start);
+            $this->create($lastId);
             $id = $this->redis()->rpop($this->redisKey);
         } elseif (!$this->redis()->lLen($this->redisKey)) {
-            $start = ceil($id / $this->limit / 10);
-            $this->create($start);
+            $this->create($id);
         }
         return $id;
     }

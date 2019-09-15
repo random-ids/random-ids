@@ -6,7 +6,6 @@
 namespace RandomIds\Tests;
 
 use PHPUnit\Framework\TestCase;
-use RandomIds\FileRandomIds;
 use RandomIds\RedisRandomIds;
 
 class RedisRandomIdsTest extends TestCase
@@ -22,19 +21,15 @@ class RedisRandomIdsTest extends TestCase
         ];
     }
 
-    /**
-     * @requires function testGetId
-     */
-    public function testCreate()
+    public function testAddIds()
     {
         $randomIds = new RedisRandomIds($this->getConnection());
-        $randomIds->redis()->lPop(RedisRandomIds::REDIS_KEY);
-        $len = $randomIds->redis()->lLen(RedisRandomIds::REDIS_KEY);
-        $randomIds->create();
-        $newLen = $randomIds->redis()->lLen(RedisRandomIds::REDIS_KEY);
-        $this->assertLessThan($newLen, $len);
+        $randomIds->redis()->ltrim($randomIds->__get('redisKey'), 1, 2);
+        $oldLength = $randomIds->getStoreLength();
+        $randomIds->addIds(10);
+        $newLength = $randomIds->getStoreLength();
+        $this->assertLessThan($newLength, $oldLength);
     }
-
 
     public function testGetId()
     {
@@ -48,17 +43,15 @@ class RedisRandomIdsTest extends TestCase
      */
     public function testGetMoreId()
     {
-        $testValue = [2134567, 2234567];
-        $method = new \ReflectionMethod('RandomIds\RedisRandomIds', 'save');
-        $method->setAccessible(true);
-        $method->invokeArgs(new RedisRandomIds($this->getConnection()), [$testValue]);
         $randomIds = new RedisRandomIds($this->getConnection());
+        $randomIds->redis()->ltrim($randomIds->__get('redisKey'), 1, 2);
+        $length = $randomIds->getStoreLength();
+        echo "\ntestGetMoreId:length=" . $length;
+        $randomIds->getId();
         $randomIds->getId();
         $lastId = $randomIds->getId();
-        $this->assertEquals($lastId, $testValue[0]);
-        $newId = $randomIds->getId();
-        $limit = ceil($lastId / $randomIds->limit) * $randomIds->limit;
-        $this->assertLessThan($newId, $limit);
+        echo "\ntestGetMoreId:lastId=" . $lastId;
+        $this->assertLessThan($randomIds->getStoreLength(), 10);
     }
 
     public function testSetLimit()
@@ -67,7 +60,7 @@ class RedisRandomIdsTest extends TestCase
         $limit = 100;
         $randomIds->setLimit($limit);
         $id = $randomIds->getId();
-        echo('id=' . $id);
+        echo("\ntestSetLimit:id=" . $id);
         $this->assertLessThan($id, 0);
         $this->assertEquals($randomIds->limit, $limit);
     }
@@ -78,7 +71,7 @@ class RedisRandomIdsTest extends TestCase
         $conn['limit'] = 100;
         $randomIds = new RedisRandomIds($conn);
         $id = $randomIds->getId();
-        echo('id=' . $id);
+        echo("\ntestInitLimit:id=" . $id);
         $this->assertLessThan($id, 0);
         $this->assertEquals($randomIds->limit, $conn['limit']);
     }

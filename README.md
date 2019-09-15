@@ -40,6 +40,18 @@ $demo = new Demo();
 $randomIds = new RandomIds\FileRandomIds($path,$limit);
 echo $randomIds->getId();
 ```
+### add new IDs to store
+```php
+<?php
+require_once('../vendor/autoload.php');
+$path = './demo_data';
+//when store length less than $lowNumber,add new IDs.
+//you can add this demo to crontab
+$lowNumber = 10;
+//you can use RedisRandomIds for redis.
+$randomIds = new RandomIds\FileRandomIds($path,$limit);
+echo $randomIds->addIds($lowNumber);
+```
 # 随机生成ID
 随机生成不重复的ID值.
 
@@ -82,8 +94,19 @@ require_once('../vendor/autoload.php');
 $path = './demo_data';
 //当limit设置为10时，首次生成随机数10-99,以后每次随机数用尽时,会依次自动生成 100-199,200-299......
 $limit = 10;
-$demo = new Demo();
 //你也可以使用RedisRandomIds.
 $randomIds = new RandomIds\FileRandomIds($path,$limit);
 echo $randomIds->getId();
+```
+### 添加一组新随机数
+```php
+<?php
+require_once('../vendor/autoload.php');
+$path = './demo_data';
+//当剩余数据量小于$lowNumber时，插入一组新数据.
+//建议把这个demo加入crontab定时执行
+$lowNumber = 10;
+//你也可以使用RedisRandomIds.
+$randomIds = new RandomIds\FileRandomIds($path,$limit);
+echo $randomIds->addIds($lowNumber);
 ```
